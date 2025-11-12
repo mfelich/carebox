@@ -8,6 +8,7 @@ import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.repo.MedicationRepo;
 import com.example.backend.repo.UserDeviceRepo;
 import com.example.backend.repo.UserRepo;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,19 +27,25 @@ public class EntityFetcher {
         this.userDeviceRepo=userDeviceRepo;
     }
 
+    public User getCurrentUser(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return findUserByEmail(email);
+    }
+
     public User findUserById(Long userId){
         return userRepo.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with given id:" + userId + " does not exist!"));
     }
 
-    public Optional<User> findUserByEmail(String email) {
-        Optional<User> user = userRepo.findByEmail(email);
+    public User findUserByEmail(String email) {
+        Optional<User> user= userRepo.findByEmail(email);
 
-        if (!user.isPresent()){
+        if (user.isEmpty()){
             throw new UserNotFoundException("User not found with email:" + email);
         }
 
-        else return user;
+        else return user.get();
         }
 
     public Medication findMedicationById(Long medicationId) {
