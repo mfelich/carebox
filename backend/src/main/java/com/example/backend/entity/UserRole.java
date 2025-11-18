@@ -1,5 +1,5 @@
 package com.example.backend.entity;
 
 public enum UserRole {
-    USER,ADMIN
+    USER,ADMIN,DOCTOR,PATIENT
 }

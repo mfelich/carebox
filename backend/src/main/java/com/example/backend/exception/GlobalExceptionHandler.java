@@ -7,15 +7,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-
-import javax.security.auth.login.AccountException;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
-    ResponseEntity<ErrorDetails> handleUserNotFoundException(AccountException exception,
+    public ResponseEntity<ErrorDetails> handleUserNotFoundException(UserNotFoundException exception,
                                                              WebRequest webRequest){
 
         ErrorDetails errorDetails = new ErrorDetails(
@@ -30,7 +28,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(MedicationNotFoundException.class)
-    ResponseEntity<ErrorDetails> handleMedicationNotFoundExcepiton(AccountException exception,
+    ResponseEntity<ErrorDetails> handleMedicationNotFoundExcepiton(MedicationNotFoundException exception,
                                                                    WebRequest webRequest){
 
         ErrorDetails errorDetails = new ErrorDetails(
@@ -44,7 +42,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DeviceNotFoundException.class)
-    ResponseEntity<ErrorDetails> handleDeviceNotFoundException(AccountException exception,
+    ResponseEntity<ErrorDetails> handleDeviceNotFoundException(DeviceNotFoundException exception,
                                                                WebRequest webRequest) {
 
         ErrorDetails errorDetails = new ErrorDetails(
@@ -71,7 +69,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    ResponseEntity<ErrorDetails> handleUsernameNotFoundException(AccountException exception,
+    ResponseEntity<ErrorDetails> handleUsernameNotFoundException(UsernameNotFoundException exception,
                                                              WebRequest webRequest){
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),

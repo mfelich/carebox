@@ -49,7 +49,7 @@ public class UserDeviceServiceImpl implements UserDeviceService {
         List<UserDevice> devices = userDeviceRepo.findAllByUserId(userId);
 
         if (devices.isEmpty()){
-            throw new UserNotFoundException("No devices for user with id:" + user);
+            throw new UserNotFoundException("No devices for user with id:" + user.getId());
         }
 
         return devices.stream()

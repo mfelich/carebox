@@ -6,6 +6,7 @@ import com.example.backend.dto.MedicationScheduleDto;
 import com.example.backend.entity.Medication;
 import com.example.backend.entity.MedicationSchedule;
 import com.example.backend.entity.User;
+import com.example.backend.entity.UserRole;
 import com.example.backend.exception.MedicationNotFoundException;
 import com.example.backend.mapper.MedicationMapper;
 import com.example.backend.mapper.MedicationScheduleMapper;
@@ -14,6 +15,7 @@ import com.example.backend.repo.MedicationScheduleRepo;
 import com.example.backend.service.MedicationScheduleService;
 import com.example.backend.service.util.EntityFetcher;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,8 +32,8 @@ public class MedicationScheduleServiceImpl implements MedicationScheduleService 
 
     public MedicationScheduleServiceImpl(EntityFetcher entityFetcher,MedicationRepo medicationRepo, MedicationScheduleRepo medicationScheduleRepo, MedicationScheduleMapper medicationScheduleMapper){
         this.entityFetcher=entityFetcher;
-        this.medicationScheduleRepo=medicationScheduleRepo;
         this.medicationRepo=medicationRepo;
+        this.medicationScheduleRepo=medicationScheduleRepo;
         this.medicationScheduleMapper=medicationScheduleMapper;
     };
 
@@ -40,6 +42,16 @@ public class MedicationScheduleServiceImpl implements MedicationScheduleService 
     public MedicationScheduleDto createScheduleForMedication(CreateSchedule createSchedule, Long medicationId) {
 
         Medication medication = entityFetcher.findMedicationById(medicationId);
+
+        User doctor = entityFetcher.getCurrentUser();
+
+        if (!doctor.getRole().equals(UserRole.DOCTOR)
+                || medication.getUser() == null
+                || medication.getUser().getDoctor() == null
+                || !medication.getUser().getDoctor().getId().equals(doctor.getId())) {
+            throw new AccessDeniedException("You can't create schedule for this medication");
+        }
+
         List<MedicationSchedule> schedules =  medication.getSchedules();
 
         MedicationSchedule newSchedule = new MedicationSchedule();
@@ -55,28 +67,49 @@ public class MedicationScheduleServiceImpl implements MedicationScheduleService 
     }
 
     @Override
-    public String removeSchedule(Long scheduleId) {
+    public String removeSchedule(Long scheduleId) throws AccessDeniedException{
         MedicationSchedule medicationSchedule = medicationScheduleRepo.findById(scheduleId)
                 .orElseThrow(() -> new MedicationNotFoundException("Medication shedule not found with id:" + scheduleId));
 
-        medicationScheduleRepo.delete(medicationSchedule);
+        User doctor = entityFetcher.getCurrentUser();
 
-        return "Schedule deleted successfully";
+        if (!doctor.getRole().equals(UserRole.DOCTOR)
+                || medicationSchedule.getMedication().getUser() == null
+                || medicationSchedule.getMedication().getUser().getDoctor() == null
+                || !medicationSchedule.getMedication().getUser().getDoctor().getId().equals(doctor.getId())) {
+            throw new AccessDeniedException("You can't create schedule for this medication");
+        }
+
+        else {
+            throw new AccessDeniedException("You can not delete this schedule");
+        }
+
     }
 
     @Override
     public List<MedicationScheduleDto> getScheduleForUser(Long userId) {
+        User currentUser = entityFetcher.getCurrentUser();
         User user = entityFetcher.findUserById(userId);
 
-        List<Medication> medications = medicationRepo.findAllByUserId(user.getId());
-        List<MedicationSchedule> schedules = new ArrayList<>();
+        if (currentUser.getRole().equals(UserRole.DOCTOR)) {
+            if (user.getDoctor() == null || !user.getDoctor().getId().equals(currentUser.getId())) {
+                throw new AccessDeniedException("You cannot see schedule for this patient");
+            }
+        } else {
+            if (!currentUser.getId().equals(userId)) {
+                throw new AccessDeniedException("You cannot see schedule for another user");
+            }
+        }
 
-        medications.forEach(medication -> schedules.addAll(medication.getSchedules()));
+        List<MedicationSchedule> schedules = medicationScheduleRepo.findAllByMedication_User_Id(userId);
+
+        if (schedules.isEmpty()) {
+            throw new MedicationNotFoundException("No schedules found for this user");
+        }
 
         return schedules.stream()
                 .map(medicationScheduleMapper::mapToDto)
                 .collect(Collectors.toList());
     }
-
 
 }

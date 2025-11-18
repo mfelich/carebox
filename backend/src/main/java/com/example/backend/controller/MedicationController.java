@@ -2,9 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.CreateMedicationDto;
 import com.example.backend.dto.MedicationDto;
-import com.example.backend.entity.Medication;
-import com.example.backend.service.util.MedicationService;
-import lombok.Getter;
+import com.example.backend.service.MedicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

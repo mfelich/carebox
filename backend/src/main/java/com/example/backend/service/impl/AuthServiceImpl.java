@@ -43,6 +43,8 @@ public class AuthServiceImpl implements AuthService {
         user.setUsername(createUserDto.getUsername());
         user.setCreatedAt(LocalDateTime.now());
         user.setRole(UserRole.USER);
+        user.setDoctor(null);
+        user.setPatients(null);
         user.setEmail(createUserDto.getEmail());
         user.setPassword(passwordEncoder.encode(createUserDto.getPassword()));
         user.setFirstName(createUserDto.getFirstName());

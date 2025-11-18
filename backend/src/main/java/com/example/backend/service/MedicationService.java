@@ -1,4 +1,4 @@
-package com.example.backend.service.util;
+package com.example.backend.service;
 
 import com.example.backend.dto.CreateMedicationDto;
 import com.example.backend.dto.MedicationDto;

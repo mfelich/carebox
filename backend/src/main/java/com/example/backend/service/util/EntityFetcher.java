@@ -2,6 +2,7 @@ package com.example.backend.service.util;
 import com.example.backend.entity.Medication;
 import com.example.backend.entity.User;
 import com.example.backend.entity.UserDevice;
+import com.example.backend.entity.UserRole;
 import com.example.backend.exception.DeviceNotFoundException;
 import com.example.backend.exception.MedicationNotFoundException;
 import com.example.backend.exception.UserNotFoundException;
@@ -57,4 +58,5 @@ public class EntityFetcher {
         return userDeviceRepo.findByDeviceUuid(deviceUuid)
                 .orElseThrow(() -> new DeviceNotFoundException("Device not found with uuid:" + deviceUuid));
     }
+
 }
