@@ -8,7 +8,9 @@ import com.example.backend.repo.UserRepo;
 import com.example.backend.service.AdminService;
 import com.example.backend.service.util.EntityFetcher;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AdminServiceImpl implements AdminService {
 
     private EntityFetcher entityFetcher;
