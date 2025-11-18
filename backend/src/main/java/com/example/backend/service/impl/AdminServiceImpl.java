@@ -7,8 +7,14 @@ import com.example.backend.mapper.UserMapper;
 import com.example.backend.repo.UserRepo;
 import com.example.backend.service.AdminService;
 import com.example.backend.service.util.EntityFetcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -38,5 +44,20 @@ public class AdminServiceImpl implements AdminService {
 
         User saved = userRepo.save(doctor);
         return userMapper.mapToDto(saved);
+    }
+
+    @Override
+    public Page<UserDto> getUsersByRole(UserRole role, Optional<String> sortBy, Optional<Integer> page) {
+
+        PageRequest pageRequest = PageRequest.of(
+                page.orElse(0),
+                12,
+                Sort.Direction.ASC,
+                sortBy.orElse("username")
+        );
+
+        Page<User> users;
+        users = userRepo.findAllByRole(role, pageRequest);
+        return users.map(userMapper::mapToDto);
     }
 }
