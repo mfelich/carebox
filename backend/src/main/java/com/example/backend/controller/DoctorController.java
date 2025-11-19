@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.PatientDto;
 import com.example.backend.dto.UserDto;
 import com.example.backend.service.DoctorService;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,17 @@ public class DoctorController {
     }
 
     @GetMapping("/{doctorId}/patients")
-    public ResponseEntity<List<UserDto>> getPatients(@PathVariable("doctorId") Long doctorId) {
-        return ResponseEntity.ok(doctorService.getPatients(doctorId));
+    public ResponseEntity<List<PatientDto>> getPatients(@PathVariable("doctorId") Long doctorId) {
+        return ResponseEntity.ok(doctorService.getPatientsForDoctor(doctorId));
     }
 
     @PostMapping("/add-patient/{patientId}")
-    public ResponseEntity<UserDto> addPatient(@PathVariable("patientId") Long patientId) {
+    public ResponseEntity<PatientDto> addPatient(@PathVariable("patientId") Long patientId) {
         return ResponseEntity.ok(doctorService.addPatient(patientId));
     }
 
+    @DeleteMapping("/remove/patient/{patientId}")
+    public ResponseEntity<String> removePatient(@PathVariable("patientId") Long patientId) {
+        return ResponseEntity.ok(doctorService.removePatient(patientId));
+    }
 }

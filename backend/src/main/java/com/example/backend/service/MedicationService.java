@@ -6,9 +6,8 @@ import com.example.backend.dto.MedicationDto;
 import java.util.List;
 
 public interface MedicationService {
-    List<MedicationDto> getAllMedicationByUserId(Long userId);
-    //editMedication
-    //getMedicaion
-    //deleteMedication
-    MedicationDto addMedication(Long userId, CreateMedicationDto createMedicationDto);
+    List<MedicationDto> getAllMedicationByPatientId(Long patientId);
+    //edit
+    String deleteMedication(Long medicationId);
+    MedicationDto addMedicationToPatient(Long patientId, CreateMedicationDto createMedicationDto);
 }

@@ -18,16 +18,20 @@ public class MedicationController {
         this.medicationService=medicationService;
     }
 
-
     @PostMapping("/{userId}")
-    ResponseEntity<MedicationDto> addMedication(@PathVariable("userId") Long userId,
+    ResponseEntity<MedicationDto> addMedicationToPatient(@PathVariable("userId") Long patientId,
                                                 @RequestBody CreateMedicationDto createMedicationDto) {
 
-        return ResponseEntity.ok(medicationService.addMedication(userId,createMedicationDto));
+        return ResponseEntity.ok(medicationService.addMedicationToPatient(patientId,createMedicationDto));
     }
 
     @GetMapping("/user/{userId}")
-    ResponseEntity<List<MedicationDto>> getMedicationUser(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(medicationService.getAllMedicationByUserId(userId));
+    ResponseEntity<List<MedicationDto>> getMedicationPatient(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(medicationService.getAllMedicationByPatientId(userId));
+    }
+
+    @DeleteMapping("/{medicationId}")
+    ResponseEntity<String> deleteMedication(@PathVariable("medicationId") Long medicationId) {
+        return ResponseEntity.ok(medicationService.deleteMedication(medicationId));
     }
 }

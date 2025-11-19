@@ -27,9 +27,9 @@ public class MedicationScheduleController {
         return ResponseEntity.ok(service.createScheduleForMedication(createSchedule,medicationId));
     }
 
-    @GetMapping("/user/{userId}")
-    ResponseEntity<List<MedicationScheduleDto>> getScheduleForUser(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(service.getScheduleForUser(userId));
+    @GetMapping("/patient/{patientId}")
+    ResponseEntity<List<MedicationScheduleDto>> getScheduleForUser(@PathVariable("userId") Long patientId) {
+        return ResponseEntity.ok(service.getScheduleForPatient(patientId));
     }
 
     @DeleteMapping("/{scheduleId}")

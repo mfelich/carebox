@@ -6,7 +6,6 @@ import com.example.backend.dto.auth.AuthReposne;
 import com.example.backend.dto.auth.AuthRequest;
 
 public interface AuthService {
-
     UserDto register(CreateUserDto createUserDto);
     AuthReposne login(AuthRequest authRequest);
 }

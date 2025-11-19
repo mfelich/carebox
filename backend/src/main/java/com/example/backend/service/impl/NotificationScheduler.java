@@ -54,7 +54,7 @@
 
                 // ✅ Uzimamo sve uređaje korisnika
                 List<UserDevice> devices =
-                        deviceRepo.findAllByUserId(schedule.getMedication().getUser().getId());
+                        deviceRepo.findAllByUserId(schedule.getMedication().getPatient().getId());
 
                 for (UserDevice device : devices) {
 

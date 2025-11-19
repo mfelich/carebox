@@ -8,5 +8,5 @@ import java.util.List;
 public interface MedicationScheduleService {
     MedicationScheduleDto createScheduleForMedication(CreateSchedule createSchedule, Long medicationId);
     String removeSchedule(Long scheduleId);
-    List<MedicationScheduleDto> getScheduleForUser(Long userId);
+    List<MedicationScheduleDto> getScheduleForPatient(Long patientId);
 }

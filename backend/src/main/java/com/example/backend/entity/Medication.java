@@ -26,7 +26,7 @@ public class Medication {
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
-    private User user;
+    private User patient;
 
     @OneToMany(mappedBy="medication", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MedicationSchedule> schedules = new ArrayList<>();

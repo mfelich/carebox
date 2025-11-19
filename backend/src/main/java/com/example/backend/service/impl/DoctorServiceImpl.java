@@ -1,10 +1,13 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.dto.DoctorDto;
+import com.example.backend.dto.PatientDto;
 import com.example.backend.dto.UserDto;
 import com.example.backend.entity.User;
 import com.example.backend.entity.UserRole;
 import com.example.backend.mapper.UserMapper;
 import com.example.backend.repo.UserRepo;
+import com.example.backend.service.AccessControlService;
 import com.example.backend.service.DoctorService;
 import com.example.backend.service.util.EntityFetcher;
 import jakarta.transaction.Transactional;
@@ -20,49 +23,65 @@ public class DoctorServiceImpl implements DoctorService {
     private EntityFetcher entityFetcher;
     private UserRepo userRepo;
     private UserMapper userMapper;
+    private AccessControlService accessControlService;
 
-    public DoctorServiceImpl(EntityFetcher entityFetcher, UserRepo userRepo, UserMapper userMapper) {
+    public DoctorServiceImpl(EntityFetcher entityFetcher, UserRepo userRepo, UserMapper userMapper, AccessControlService accessControlService) {
         this.entityFetcher=entityFetcher;
         this.userRepo=userRepo;
         this.userMapper=userMapper;
+        this.accessControlService=accessControlService;
     }
 
     @Override
-    public List<UserDto> getPatients(Long doctorId) throws AccessDeniedException {
+    public List<PatientDto> getPatientsForDoctor(Long doctorId) {
+        User currentUser = entityFetcher.getCurrentUser();
         User doctor = entityFetcher.findUserById(doctorId);
 
-        if (!doctor.getRole().equals(UserRole.DOCTOR)) {
-            throw new AccessDeniedException("User is not doctor, user role is:" + doctor.getRole().toString());
+        if (doctor.getRole() != UserRole.DOCTOR) {
+            throw new AccessDeniedException("User is not a doctor, role: " + doctor.getRole());
         }
+
+        if (currentUser.getRole() != UserRole.ADMIN && !currentUser.getId().equals(doctorId)) {
+            throw new AccessDeniedException("You do not have access to view this doctor's patients.");
+        }
+
         List<User> patients = userRepo.findByDoctor_Id(doctorId);
+
         return patients.stream()
-                .map(userMapper::mapToDto)
+                .map(userMapper::mapToPatientDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public UserDto addPatient(Long patientId) throws AccessDeniedException {
-        User doctor = entityFetcher.getCurrentUser();
-
-        if (!doctor.getRole().equals(UserRole.DOCTOR)) {
-            throw new AccessDeniedException("You are not a doctor.");
-        }
-
+    public PatientDto addPatient(Long patientId) throws AccessDeniedException {
+        User currentUser = entityFetcher.getCurrentUser();
         User patient = entityFetcher.findUserById(patientId);
 
-        if (patient.getRole().equals(UserRole.DOCTOR)) {
-            throw new AccessDeniedException("User with id:" + patient.getId() + " is a doctor.");
+        if (!accessControlService.canAddPatient(currentUser,patient)) {
+            throw new AccessDeniedException("You cannot assign this patient.");
         }
 
-        // Poveži pacijenta s doktorom
-        patient.setDoctor(doctor);
+        patient.setDoctor(currentUser);
         patient.setRole(UserRole.PATIENT);
 
-        // Spremi pacijenta - Hibernate automatski ažurira listu pacijenata doktora
         User savedPatient = userRepo.save(patient);
 
-        return userMapper.mapToDto(savedPatient);
+        return userMapper.mapToPatientDto(savedPatient);
+    }
+
+    public String removePatient(Long patientId) {
+        User currentUser = entityFetcher.getCurrentUser();
+        User patient = entityFetcher.findUserById(patientId);
+
+        if (!accessControlService.hasAccessToPatient(currentUser,patient)){
+            throw new AccessDeniedException("You do not have permission to remove this patient.");
+        }
+
+        patient.setDoctor(null);
+        userRepo.save(patient);
+
+        return "Patient removed successfully.";
     }
 
 
