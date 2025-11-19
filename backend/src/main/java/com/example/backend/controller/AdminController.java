@@ -20,6 +20,7 @@ public class AdminController {
         this.service=service;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{userId}/set-to-doctor")
     public ResponseEntity<UserDto> setUserToDoctor(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(service.setUserToDoctor(userId));

@@ -27,17 +27,7 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole(),
-                mapListToPatientDto(user.getPatients()));
-    }
-
-    private List<PatientDto> mapListToPatientDto(List<User> users){
-        List<PatientDto> patientDtoList = new ArrayList<>();
-
-        for (User user : users) {
-            PatientDto patientDto = mapToPatientDto(user);
-            patientDtoList.add(patientDto);
-        }
-        return patientDtoList;
+                listOfIds(user.getPatients()));
     }
 
     public PatientDto mapToPatientDto(User user) {
@@ -46,7 +36,16 @@ public class UserMapper {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole(),
-                mapToDoctorDto(user.getDoctor())
+                user.getDoctor().getId()
         );
+    }
+
+    public List<Long> listOfIds(List<User> users) {
+        List<Long> ids = new ArrayList<>();
+
+        for (User user : users) {
+            ids.add(user.getId());
+        }
+        return ids;
     }
 }

@@ -17,5 +17,5 @@ public class DoctorDto {
     private String firstName;
     private String lastName;
     private UserRole role;
-    private List<PatientDto> patients;
+    private List<Long> patientsIds;
 }

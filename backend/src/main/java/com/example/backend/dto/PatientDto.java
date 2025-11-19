@@ -15,5 +15,5 @@ public class PatientDto {
     private String firstName;
     private String lastName;
     private UserRole role;
-    private DoctorDto doctor;
+    private Long doctorId;
 }
