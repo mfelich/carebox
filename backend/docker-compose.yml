@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  backend:
+    build: .
+    container_name: carebox-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/careboxdb
+      SPRING_DATASOURCE_USERNAME: careboxuser
+      SPRING_DATASOURCE_PASSWORD: careboxpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: carebox-db
+    environment:
+      POSTGRES_DB: careboxdb
+      POSTGRES_USER: careboxuser
+      POSTGRES_PASSWORD: careboxpass
+    volumes:
+      - carebox-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  carebox-db-data:
