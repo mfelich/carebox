@@ -1,6 +1,6 @@
 package com.example.backend.dto;
 
-import jakarta.persistence.Column;
+import com.example.backend.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class UserDto {
 
     private Long id;
+    private UserRole role;
     private String email;
     private String firstName;
     private String lastName;

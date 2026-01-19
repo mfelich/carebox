@@ -39,6 +39,10 @@ public class AdminServiceImpl implements AdminService {
 
         User doctor = entityFetcher.findUserById(userId);
 
+        if (doctor.getRole().equals(UserRole.ADMIN)){
+            throw new AccessDeniedException("You can not assign ADMIN as DOCTOR");
+        }
+
         doctor.setRole(UserRole.DOCTOR);
         doctor.setDoctor(null);
 

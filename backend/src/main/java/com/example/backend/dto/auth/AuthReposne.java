@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthReposne {
-    private String userId;
+    private Long userId;
     private String accessToken;
     private String refreshToken;
 }

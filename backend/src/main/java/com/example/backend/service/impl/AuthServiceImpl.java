@@ -10,6 +10,7 @@ import com.example.backend.mapper.UserMapper;
 import com.example.backend.repo.UserRepo;
 import com.example.backend.service.AuthService;
 import com.example.backend.service.security.JwtService;
+import com.example.backend.service.security.UserInfoDetails;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -63,8 +64,12 @@ public class AuthServiceImpl implements AuthService {
         if (authentication.isAuthenticated()) {
             String token = jwtService.generateToken(authRequest.getEmail());
 
+            UserInfoDetails userDetails =
+                    (UserInfoDetails) authentication.getPrincipal();
+
             AuthReposne response = new AuthReposne();
             response.setAccessToken(token);
+            response.setUserId(userDetails.getUser().getId());
 
             return response;
         } else {
